@@ -8,7 +8,7 @@ const { verifyToken } = require("../Middlewares/authentication");
 
 const SECRET_KEY = process.env.Secret_key
 
-const router = express();
+const router = express.Router();
 
 router.post("/register", async (req, res) => {
 
@@ -130,5 +130,107 @@ router.get("/get/user/single", verifyToken, async (req, res) => {
     }
 
 })
+
+
+router.get("/get/all/users", verifyToken, async (req, res) => {
+
+    try {
+
+        const uid = req.uid;
+
+        const user = await Users.findOne({ uid });
+
+        const role = user.role;
+
+        if (role == "Super Admin") {
+
+            const allUsers = await Users.find({})
+
+            if (!allUsers) {
+                return res.status(404).json({ message: "Users not found", isError: true })
+            }
+
+            return res.status(200).json({ message: "Users fetched Successfully", allUsers, isError: false })
+
+        }
+
+        return res.status(401).json({ message: "Unauthorized user", isError: true })
+
+    }
+    catch (error) {
+        console.log("Error", error);
+        return res.status(500).json({ message: "Something went wrong", isError: true })
+    }
+
+
+})
+
+router.patch("/update/user/single/:uid", verifyToken, async (req, res) => {
+    try {
+
+        const uid = req.uid;
+        const user = await Users.findOne({ uid });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found", isError: true });
+        }
+
+        if (user.role === "Super Admin") {
+
+            const { uid } = req.params;
+            const { fullName, email, status, role } = req.body;
+
+            const newUser = { fullName, email, status, role };
+
+            const updatedUser = await Users.findOneAndUpdate({ uid }, newUser, { returnDocument: 'after' });
+
+            if (!updatedUser) {
+                return res.status(404).json({ message: "User to update not found", isError: true });
+            }
+
+            return res.status(200).json({ message: "User updated successfully", updatedUser, isError: false });
+        }
+
+        return res.status(403).json({ message: "Access Denied: Only Super Admin can update users", isError: true });
+
+    } catch (error) {
+        console.error("Error updating single user:", error);
+        return res.status(500).json({ message: "Something went wrong", isError: true });
+    }
+});
+
+
+router.delete("/delete/user/single/:uid", verifyToken, async (req, res) => {
+    try {
+
+        const uid = req.uid;
+        const user = await Users.findOne({ uid })
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found", isError: true });
+        }
+
+        if (user.role === "Super Admin") {
+
+            const { uid } = req.params;
+
+            const deleteUser = await Users.findOneAndDelete({ uid });
+
+            if (!deleteUser) {
+                return res.status(404).json({ message: "User to delete not found", isError: true });
+            }
+
+            return res.status(200).json({ message: "User deleted successfully", deleteUser, isError: false });
+        }
+
+        return res.status(403).json({ message: "Access Denied: Only Super Admin can update users", isError: true });
+
+    } catch (error) {
+        console.error("Error updating single user:", error);
+        return res.status(500).json({ message: "Something went wrong", isError: true });
+    }
+});
+
+
 
 module.exports = router;

@@ -21,6 +21,7 @@ const verifyToken = async (req, res, next) => {
 
         req.uid = decoded.uid;
         req.role = decoded.role;
+        req.user = decoded.user
 
         next();
 
