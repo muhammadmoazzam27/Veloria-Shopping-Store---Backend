@@ -66,7 +66,13 @@ router.post("/login", async (req, res) => {
 
             const uid = user.uid;
 
-            const token = await jwt.sign({ uid }, `${SECRET_KEY}`, { expiresIn: "1d" })
+            const token = await jwt.sign({ uid }, `${SECRET_KEY}`, { expiresIn: "1h" })
+
+            const status = user.status;
+
+            if(status === "In Active"){
+                return res.status(403).json({ message: "Your status is not active", isError: true })
+            }
 
             return res.status(200).json({ message: "A user successfully login", token, isError: false })
 

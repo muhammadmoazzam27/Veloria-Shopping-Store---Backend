@@ -87,7 +87,7 @@ router.patch("/update/single/product/:id", verifyToken, async (req, res) => {
     try {
 
         const uid = req.uid;
-        const id = req.params;
+        const { id } = req.params;
 
         const user = await Users.findOne({ uid });
 
@@ -152,5 +152,6 @@ router.delete("/delete/product/:id", verifyToken, async (req, res) => {
     }
 
 })
+
 
 module.exports = router;
