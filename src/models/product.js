@@ -11,8 +11,8 @@ const productSchema = new Schema({
     description: { type: String, required: true, trim: true },
     stock: { type: Number, required: true, trim: true },
     price: { type: Number, required: true, trim: true },
-    // imageURL: { type: String, required: true, trim: true },
-    // public_id: { type: String, required: true, trim: true },
+    imageURL: { type: String, required: true, trim: true },
+    imagePublicId: { type: String, required: true, trim: true },
 },
     { timestamps: true })
 

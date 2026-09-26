@@ -3,10 +3,15 @@ const { verifyToken } = require("../Middlewares/authentication");
 const { randomId } = require("../utils/global");
 const { Users } = require("../models/auth");
 const { Products } = require("../models/product");
+const cloudinary = require("../config/cloudinary");
+
+const multer = require("multer");
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 const router = express.Router();
 
-router.post("/create", verifyToken, async (req, res) => {
+router.post("/create", verifyToken, upload.fields([{ name: "image" }]), async (req, res) => {
 
     try {
 
@@ -23,12 +28,39 @@ router.post("/create", verifyToken, async (req, res) => {
         if (role === "Super Admin" || role === "Admin") {
 
             const { title, stock, category, price, description } = req.body;
+            // const {productData} = req.body;
+
+            let imageURL = "", imagePublicId = ""
+
+            if (req.files && req.files["image"] && req.files["image"][0]) {
+
+                const fileBuffer = req.files["image"][0].buffer;
+
+                if (!fileBuffer) {
+                    return res.status(400).json({ message: "File buffer missing. Check Multer configuration.", isError: true });
+                }
+
+                await new Promise((resolve, reject) => {
+                    const uploadStream = cloudinary.uploader.upload_stream(
+                        { folder: "velora/images/" },
+                        (error, result) => {
+                            if (error) {
+                                return reject(error)
+                            }
+                            imageURL = result.secure_url,
+                            imagePublicId = result.public_id,
+                            resolve();
+                        }
+                    )
+                    uploadStream.end(fileBuffer);
+                })
+            }
 
             const id = randomId();
 
-            const productData = { id, title, stock, category, price, description, uid, user_role: role };
+            const newProduct = { id, title, stock, category, price, description, uid, user_role: role, imageURL, imagePublicId };
 
-            const product = await Products(productData);
+            const product = await Products(newProduct);
 
             await product.save();
 
