@@ -48,8 +48,8 @@ router.post("/create", verifyToken, upload.fields([{ name: "image" }]), async (r
                                 return reject(error)
                             }
                             imageURL = result.secure_url,
-                            imagePublicId = result.public_id,
-                            resolve();
+                                imagePublicId = result.public_id,
+                                resolve();
                         }
                     )
                     uploadStream.end(fileBuffer);
@@ -113,6 +113,23 @@ router.get("/get/all/products", verifyToken, async (req, res) => {
         return res.status(500).json({ message: "Something went wrong", isError: true })
     }
 })
+
+router.get("/get/all/products", verifyToken, async (req, res) => {
+
+    try {
+
+        const allProducts = await Products.find({})
+
+        return res.status(200).json({ message: "Product fetched successfully", allProducts, isError: false })
+
+    }
+    catch (error) {
+        console.error("Error : ", error);
+        return res.status(500).json({ message: "Something went wrong", isError: true })
+    }
+
+})
+
 
 router.patch("/update/single/product/:id", verifyToken, async (req, res) => {
 
