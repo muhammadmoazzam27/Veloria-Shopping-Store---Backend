@@ -10,7 +10,7 @@ const orderSchema = new Schema({
     imageURL: { type: String, required: true, trim: true },
     price: { type: String, required: true, trim: true },
     quantity: { type: String, required: true, trim: true },
-    status: { type: String, enum: ["Pending", "Shipped", "Delivered"], required: true, trim: true }
+    status: { type: String, enum: ["Pending", "Shipped", "Delivered"], default:"Pending", required: true, trim: true }
 })
 
 const Orders = mongoose.model("orders", orderSchema);
