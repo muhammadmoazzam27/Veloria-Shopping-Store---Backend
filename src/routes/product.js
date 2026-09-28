@@ -114,7 +114,7 @@ router.get("/get/all/products", verifyToken, async (req, res) => {
     }
 })
 
-router.get("/get/all/products", verifyToken, async (req, res) => {
+router.get("/show/all/products", verifyToken, async (req, res) => {
 
     try {
 

@@ -5,6 +5,7 @@ const cors = require("cors");
 const { connectDB } = require("./src/config/db");
 const auth = require("./src/routes/auth");
 const products = require("./src/routes/product");
+const orders = require("./src/routes/order");
 
 const PORT = process.env.PORT
 
@@ -16,6 +17,8 @@ connectDB();
 app.use("/api/auth", auth);
 
 app.use("/api/products", products);
+
+app.use("/api/orders", orders);
 
 app.get("/", (req, res) => {
     res.send("E-Commerce Web Application")
