@@ -4,12 +4,12 @@ const { Schema } = mongoose;
 
 const userSchema = new Schema(
     {
-        uid: { type: String, required: true, trim: true, uinque: true },
-        email: { type: String, required: true, trim: true, uinque: true },
+        uid: { type: String, required: true, trim: true, unique: true },
+        email: { type: String, required: true, trim: true, unique: true },
         fullName: { type: String, required: true, trim: true },
         password: { type: String, required: true, trim: true },
-        status: { type: String, required: true, trim: true, enum: ["Active", "In-Active"], default: "Active" },
-        role: { type: String, required: true, trim: true, enum: ["Super Admin", "Admin", "Customer"], default: "Admin" },
+        status: { type: String, required: true, trim: true, enum: ["Active", "In-Active"], default: "Active", },
+        role: { type: String, required: true, trim: true, enum: ["Super Admin", "Admin", "Customer"], default: "Admin", },
     },
     { timestamps: true }
 );
